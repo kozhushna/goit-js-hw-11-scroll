@@ -9,9 +9,10 @@ const refs = getRefs();
 const imagesApiService = new ImagesApiService();
 const gallery = new Gallery(refs);
 const loadMoreBtn = new LoadMoreButton(refs, true);
+
 refs.searchForm.addEventListener('submit', onSearch);
 refs.searchQuery.addEventListener('input', onClear);
-loadMoreBtn.button.addEventListener('click', () => searchImages(false));
+loadMoreBtn.button.addEventListener('click', () => searchImages(true));
 
 function onSearch(e) {
   e.preventDefault();
@@ -24,7 +25,7 @@ function onSearch(e) {
   }
   imagesApiService.query = searchQuery;
   imagesApiService.resetPage();
-  searchImages(true);
+  searchImages(false);
 }
 
 function onFetchError(error) {
@@ -38,13 +39,13 @@ function onClear(e) {
   }
 }
 
-async function searchImages(isNew) {
+async function searchImages(showMore) {
   loadMoreBtn.hide();
   try {
     const images = await imagesApiService.fetchImages();
     gallery.renderGallery(images);
 
-    if (isNew) {
+    if (!showMore) {
       Notiflix.Notify.info(
         `Hooray! We found ${imagesApiService.total} images.`
       );
@@ -58,7 +59,19 @@ async function searchImages(isNew) {
     } else {
       loadMoreBtn.show();
     }
+    if (showMore) {
+      scroll();
+    }
   } catch (error) {
     onFetchError(error);
   }
+}
+
+function scroll() {
+  const { height: cardHeight } =
+    refs.imagesContainer.firstElementChild.getBoundingClientRect();
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }
