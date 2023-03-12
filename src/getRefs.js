@@ -5,5 +5,6 @@ export default function getRefs() {
     imagesContainer: document.querySelector('.gallery'),
     searchQuery: document.querySelector('input[name="searchQuery"]'),
     loadMoreBtn: document.querySelector('.load-more'),
+    gallery: document.querySelector('.photo-card'),
   };
 }

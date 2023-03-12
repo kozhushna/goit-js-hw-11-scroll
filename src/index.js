@@ -4,11 +4,15 @@ import ImagesApiService from './fetchImages';
 import { Gallery } from './markupGallery';
 import { LoadMoreButton } from './load-more-btn';
 import Notiflix from 'notiflix';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const refs = getRefs();
 const imagesApiService = new ImagesApiService();
 const gallery = new Gallery(refs);
 const loadMoreBtn = new LoadMoreButton(refs, true);
+
+const lightbox = new SimpleLightbox('.photo-card a');
 
 refs.searchForm.addEventListener('submit', onSearch);
 refs.searchQuery.addEventListener('input', onClear);
@@ -44,6 +48,7 @@ async function searchImages(showMore) {
   try {
     const images = await imagesApiService.fetchImages();
     gallery.renderGallery(images);
+    lightbox.refresh();
 
     if (!showMore) {
       Notiflix.Notify.info(

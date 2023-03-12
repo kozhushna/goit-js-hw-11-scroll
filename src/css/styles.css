@@ -29,6 +29,11 @@ ul {
   padding: 0;
 }
 
+a {
+  display: block;
+  height: 100%;
+}
+
 img {
   display: block;
   object-fit: cover;
