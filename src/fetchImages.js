@@ -12,20 +12,19 @@ export default class ImagesApiService {
     this.currentImages = 0;
   }
 
-  fetchImages() {
+  async fetchImages() {
     const url = `${BASE_URL}/?key=${API_KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&per_page=${PAGE_SIZE}&page=${this.page}`;
+    const result = await axios.get(url);
 
-    return axios.get(url).then(result => {
-      this.incrementPage();
-      if (result.data.totalHits === 0) {
-        throw new Error(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-      }
-      this.currentImages += result.data.hits.length;
-      this.total = result.data.totalHits;
-      return result.data.hits;
-    });
+    if (result.data.totalHits === 0) {
+      throw new Error(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    }
+    this.incrementPage();
+    this.currentImages += result.data.hits.length;
+    this.total = result.data.totalHits;
+    return result.data.hits;
   }
 
   isLastPage() {

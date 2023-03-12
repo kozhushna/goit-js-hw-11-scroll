@@ -38,25 +38,27 @@ function onClear(e) {
   }
 }
 
-function searchImages(isNew) {
+async function searchImages(isNew) {
   loadMoreBtn.hide();
-  imagesApiService
-    .fetchImages()
-    .then(images => {
-      gallery.renderGallery(images);
-      if (isNew) {
-        Notiflix.Notify.info(
-          `Hooray! We found ${imagesApiService.total} images.`
-        );
-      }
-      if (imagesApiService.isLastPage()) {
-        loadMoreBtn.hide();
-        Notiflix.Notify.info(
-          "We're sorry, but you've reached the end of search results."
-        );
-      } else {
-        loadMoreBtn.show();
-      }
-    })
-    .catch(onFetchError);
+  try {
+    const images = await imagesApiService.fetchImages();
+    gallery.renderGallery(images);
+
+    if (isNew) {
+      Notiflix.Notify.info(
+        `Hooray! We found ${imagesApiService.total} images.`
+      );
+    }
+
+    if (imagesApiService.isLastPage()) {
+      loadMoreBtn.hide();
+      Notiflix.Notify.info(
+        "We're sorry, but you've reached the end of search results."
+      );
+    } else {
+      loadMoreBtn.show();
+    }
+  } catch (error) {
+    onFetchError(error);
+  }
 }
